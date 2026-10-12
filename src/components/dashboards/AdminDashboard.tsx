@@ -37,6 +37,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, cur
   const [annTitle, setAnnTitle] = useState('');
   const [annBody, setAnnBody] = useState('');
   const [annAudience, setAnnAudience] = useState<'all' | 'students' | 'faculty'>('all');
+  const [assignmentFacultyUid, setAssignmentFacultyUid] = useState('');
+  const [assignmentClassId, setAssignmentClassId] = useState('');
+  const [assignmentMessage, setAssignmentMessage] = useState('');
+
+  const selectedAssignmentFaculty = state.faculty.find((profile) => profile.uid === assignmentFacultyUid) || state.faculty[0];
+  const assignableClasses = state.classes.filter((classSection) =>
+    !selectedAssignmentFaculty || classSection.departmentId === selectedAssignmentFaculty.departmentId
+  );
+  const selectedAssignmentClassId = assignmentClassId || assignableClasses[0]?.classId || '';
+  const handleAssignClass = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!selectedAssignmentFaculty || !selectedAssignmentClassId) {
+      setAssignmentMessage('Choose a faculty member and a class section.');
+      return;
+    }
+    const didAssign = storage.assignFacultyToClass(selectedAssignmentClassId, selectedAssignmentFaculty.uid);
+    setAssignmentMessage(didAssign
+      ? `Assignment saved: ${state.classes.find((item) => item.classId === selectedAssignmentClassId)?.section} is now assigned to ${state.users.find((item) => item.uid === selectedAssignmentFaculty.uid)?.displayName}.`
+      : 'Assignment was not saved. Faculty and class must belong to the same department.');
+  };
 
   const filteredUsers = state.users.filter((u) => {
     const matchesSearch =
@@ -77,7 +97,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, cur
     let filename = `campusiq_${type}_roster_${new Date().toISOString().split('T')[0]}.csv`;
 
     if (type === 'students') {
-      headers = ['Student ID', 'Roll Number', 'Name', 'Email', 'Department', 'Semester', 'CGPA', 'Backlogs'];
+      headers = ['Student ID', 'Roll Number', 'Name', 'Email', 'Department', 'Section', 'Semester', 'CGPA', 'Backlogs'];
       rows = state.students.map((s) => {
         const u = state.users.find((user) => user.uid === s.uid);
         return [
@@ -86,6 +106,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, cur
           `"${u?.displayName || 'Unknown'}"`,
           u?.email || '',
           `"${s.departmentName}"`,
+          s.section,
           s.semester,
           s.cgpa,
           s.backlogs,
@@ -405,6 +426,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, cur
                     <th className="py-3 px-4">Student</th>
                     <th className="py-3 px-4">Roll Number</th>
                     <th className="py-3 px-4">Department</th>
+                    <th className="py-3 px-4">Section</th>
                     <th className="py-3 px-4">Semester</th>
                     <th className="py-3 px-4">CGPA</th>
                     <th className="py-3 px-4">Backlogs</th>
@@ -432,6 +454,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, cur
                       </td>
                       <td className="py-3 px-4 text-slate-500">
                         {s.departmentName}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="rounded-md bg-indigo-50 px-2 py-1 text-[10px] font-bold text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300">{s.section}</span>
                       </td>
                       <td className="py-3 px-4">
                         Sem {s.semester}
@@ -469,6 +494,44 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, cur
       {/* Faculty Tab */}
       {currentTab === 'faculty' && (
         <div className="space-y-6">
+          <form onSubmit={handleAssignClass} className="glass-card space-y-4 rounded-2xl border border-indigo-200 p-5 dark:border-indigo-900/60">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Assign faculty to a branch section</h3>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Choose a faculty member and a course section. Students in that branch/section will appear on the faculty roster.</p>
+            </div>
+            <div className="grid gap-3 md:grid-cols-[1fr_1.4fr_auto]">
+              <label className="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                Faculty member
+                <select
+                  value={assignmentFacultyUid || state.faculty[0]?.uid || ''}
+                  onChange={(event) => { setAssignmentFacultyUid(event.target.value); setAssignmentClassId(''); }}
+                  className="mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900"
+                >
+                  {state.faculty.map((profile) => (
+                    <option key={profile.uid} value={profile.uid}>{state.users.find((user) => user.uid === profile.uid)?.displayName || profile.uid} · {profile.departmentName}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                Branch, section, course and semester
+                <select
+                  required
+                  value={selectedAssignmentClassId}
+                  onChange={(event) => setAssignmentClassId(event.target.value)}
+                  className="mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900"
+                >
+                  {assignableClasses.map((classSection) => {
+                    const studentsInSection = state.students.filter((student) => student.departmentId === classSection.departmentId && student.section === classSection.section && student.semester === classSection.semester && student.academicYear === classSection.academicYear).length;
+                    const branchCode = state.departments.find((department) => department.departmentId === classSection.departmentId)?.code || classSection.departmentId;
+                    return <option key={classSection.classId} value={classSection.classId}>{branchCode} · {classSection.section} · {classSection.courseCode} · Sem {classSection.semester} · {studentsInSection} students</option>;
+                  })}
+                </select>
+              </label>
+              <button type="submit" className="self-end rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-700">Save assignment</button>
+            </div>
+            {assignmentMessage && <p role="status" className="text-xs font-medium text-indigo-700 dark:text-indigo-300">{assignmentMessage}</p>}
+          </form>
+
           <div className="glass-card rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
@@ -531,8 +594,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, cur
                       <td className="py-3 px-4">
                         <div className="flex flex-wrap gap-1">
                           {f.assignedClasses.map((clsId) => (
-                            <span key={clsId} className="px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-[10px] font-mono">
-                              {clsId}
+                            <span key={clsId} className="px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-[10px]">
+                              {state.classes.find((classSection) => classSection.classId === clsId)?.section || clsId} · {state.classes.find((classSection) => classSection.classId === clsId)?.courseCode || 'Class'}
                             </span>
                           ))}
                         </div>

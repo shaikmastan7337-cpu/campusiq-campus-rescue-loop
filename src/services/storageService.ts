@@ -77,7 +77,24 @@ function getInitialState(): AppState {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      return JSON.parse(saved);
+      const restored = JSON.parse(saved) as AppState;
+      const users = [...restored.users];
+      INITIAL_USERS.forEach((initialUser) => {
+        if (!users.some((user) => user.uid === initialUser.uid)) users.push(initialUser);
+      });
+      const faculty = [...restored.faculty];
+      INITIAL_FACULTY.forEach((initialFaculty) => {
+        if (!faculty.some((profile) => profile.uid === initialFaculty.uid)) faculty.push(initialFaculty);
+      });
+      const classes = [...restored.classes];
+      INITIAL_CLASSES.forEach((initialClass) => {
+        if (!classes.some((classSection) => classSection.classId === initialClass.classId)) classes.push(initialClass);
+      });
+      const students = restored.students.map((student) => ({
+        ...student,
+        section: student.section || INITIAL_STUDENTS.find((initialStudent) => initialStudent.uid === student.uid)?.section || 'Unassigned',
+      }));
+      return { ...restored, users, faculty, classes, students };
     }
   } catch (e) {
     console.error('Failed to parse saved state:', e);
@@ -142,6 +159,34 @@ class StorageManager {
       `Switched active role to ${user.role} (${user.displayName})`
     );
     this.notify();
+  }
+
+  public assignFacultyToClass(classId: string, facultyUid: string): boolean {
+    const classSection = this.state.classes.find((item) => item.classId === classId);
+    const facultyProfile = this.state.faculty.find((item) => item.uid === facultyUid);
+    const facultyUser = this.state.users.find((item) => item.uid === facultyUid && item.role === 'faculty');
+    if (!classSection || !facultyProfile || !facultyUser || facultyProfile.departmentId !== classSection.departmentId) return false;
+
+    const previousFacultyUid = classSection.facultyUid;
+    classSection.facultyUid = facultyUid;
+    classSection.facultyName = facultyUser.displayName;
+    this.state.faculty = this.state.faculty.map((profile) => {
+      if (previousFacultyUid === facultyUid && profile.uid === facultyUid) {
+        return profile.assignedClasses.includes(classId)
+          ? profile
+          : { ...profile, assignedClasses: [...profile.assignedClasses, classId] };
+      }
+      if (profile.uid === previousFacultyUid) {
+        return { ...profile, assignedClasses: profile.assignedClasses.filter((assignedId) => assignedId !== classId) };
+      }
+      if (profile.uid === facultyUid && !profile.assignedClasses.includes(classId)) {
+        return { ...profile, assignedClasses: [...profile.assignedClasses, classId] };
+      }
+      return profile;
+    });
+    this.addAuditLog('FACULTY_CLASS_ASSIGNED', 'ClassSection', classId, `Assigned ${classSection.section} ${classSection.courseCode} to ${facultyUser.displayName}`);
+    this.notify();
+    return true;
   }
 
   public markAttendance(

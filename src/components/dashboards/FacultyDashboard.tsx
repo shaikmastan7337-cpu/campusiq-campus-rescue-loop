@@ -25,7 +25,7 @@ export const FacultyDashboard: React.FC<FacultyDashboardProps> = ({
   currentTab,
 }) => {
   const state = storage.getState();
-  const [selectedClassId, setSelectedClassId] = useState<string>('cls-301');
+  const [selectedClassId, setSelectedClassId] = useState<string>('');
   const [attendanceDate, setAttendanceDate] = useState<string>(
     new Date().toISOString().split('T')[0]
   );
@@ -50,7 +50,23 @@ export const FacultyDashboard: React.FC<FacultyDashboardProps> = ({
   const [newMaxMarks, setNewMaxMarks] = useState(50);
 
   const assignedClasses = state.classes.filter((c) => c.facultyUid === currentUser.uid);
-  const currentClass = state.classes.find((c) => c.classId === selectedClassId) || state.classes[0];
+  const currentClass = assignedClasses.find((c) => c.classId === selectedClassId) || assignedClasses[0];
+  const currentClassStudents = currentClass
+    ? state.students.filter((student) =>
+        student.departmentId === currentClass.departmentId &&
+        student.section === currentClass.section &&
+        student.semester === currentClass.semester &&
+        student.academicYear === currentClass.academicYear
+      )
+    : [];
+  const assignedStudentCount = new Set(state.students
+    .filter((student) => assignedClasses.some((classSection) =>
+      classSection.departmentId === student.departmentId &&
+      classSection.section === student.section &&
+      classSection.semester === student.semester &&
+      classSection.academicYear === student.academicYear
+    ))
+    .map((student) => student.studentId)).size;
 
   const handleStatusChange = (studentId: string, status: AttendanceStatus) => {
     setAttendanceDraft((prev) => ({
@@ -60,10 +76,13 @@ export const FacultyDashboard: React.FC<FacultyDashboardProps> = ({
   };
 
   const handleSaveAttendance = () => {
+    if (!currentClass) return;
     Object.entries(attendanceDraft).forEach(([studentId, status]) => {
-      storage.markAttendance(studentId, selectedClassId, status, sessionName, attendanceDate);
+      if (currentClassStudents.some((student) => student.studentId === studentId)) {
+        storage.markAttendance(studentId, currentClass.classId, status, sessionName, attendanceDate);
+      }
     });
-    setSaveSuccessMsg('Attendance records successfully recorded and committed to Firestore!');
+    setSaveSuccessMsg(`Attendance saved locally for ${currentClassStudents.length} ${currentClass.section} students.`);
     setTimeout(() => setSaveSuccessMsg(''), 4000);
   };
 
@@ -74,10 +93,10 @@ export const FacultyDashboard: React.FC<FacultyDashboardProps> = ({
 
   const handleCreateAssignment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle) return;
+    if (!newTitle || !currentClass) return;
 
     storage.createAssignment({
-      classId: selectedClassId,
+      classId: currentClass.classId,
       courseName: currentClass.courseName,
       title: newTitle,
       description: newDesc,
@@ -104,7 +123,7 @@ export const FacultyDashboard: React.FC<FacultyDashboardProps> = ({
               Welcome, {currentUser.displayName}
             </h1>
             <p className="text-sm text-emerald-100 max-w-xl mt-1 leading-relaxed">
-              Managing {assignedClasses.length} courses. Next session: CS601 Distributed Systems at 09:00 AM.
+              Managing {assignedClasses.length} course sections: {Array.from(new Set(assignedClasses.map((classSection) => classSection.section))).join(', ') || 'none assigned'}.
             </p>
           </div>
 
@@ -132,14 +151,14 @@ export const FacultyDashboard: React.FC<FacultyDashboardProps> = ({
         <StatCard
           title="Assigned Classes"
           value={assignedClasses.length}
-          subtitle="Section CSE-A"
+          subtitle={`${Array.from(new Set(assignedClasses.map((classSection) => classSection.section))).join(', ') || 'No section'} assigned`}
           icon={Layers}
           colorTheme="emerald"
         />
         <StatCard
           title="Active Students"
-          value="65 Enrolled"
-          subtitle="Attendance average 84%"
+          value={assignedStudentCount}
+          subtitle="Students in assigned sections"
           icon={Users}
           colorTheme="indigo"
         />
@@ -176,13 +195,13 @@ export const FacultyDashboard: React.FC<FacultyDashboardProps> = ({
 
             <div className="flex flex-wrap items-center gap-2">
               <select
-                value={selectedClassId}
+                value={currentClass?.classId || ''}
                 onChange={(e) => setSelectedClassId(e.target.value)}
                 className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold"
               >
                 {assignedClasses.map((c) => (
                   <option key={c.classId} value={c.classId}>
-                    {c.courseName} ({c.section})
+                    {c.section} · {c.courseCode} · Sem {c.semester} ({c.courseName})
                   </option>
                 ))}
               </select>
@@ -196,6 +215,7 @@ export const FacultyDashboard: React.FC<FacultyDashboardProps> = ({
 
               <button
                 onClick={handleSaveAttendance}
+                disabled={!currentClass}
                 className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition"
               >
                 <Save className="w-3.5 h-3.5" />
@@ -206,7 +226,7 @@ export const FacultyDashboard: React.FC<FacultyDashboardProps> = ({
 
           {/* Student Roster Table */}
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {state.students.map((stu) => {
+            {currentClassStudents.map((stu) => {
               const currentStatus = attendanceDraft[stu.studentId] || 'present';
               return (
                 <div key={stu.studentId} className="py-3 flex items-center justify-between text-xs">
@@ -247,6 +267,9 @@ export const FacultyDashboard: React.FC<FacultyDashboardProps> = ({
                 </div>
               );
             })}
+            {currentClassStudents.length === 0 && (
+              <p className="py-6 text-center text-xs text-slate-500">No students are enrolled in this assigned section yet.</p>
+            )}
           </div>
         </div>
       )}

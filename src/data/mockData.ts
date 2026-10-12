@@ -53,6 +53,16 @@ export const INITIAL_USERS: User[] = [
     phone: '+1 (555) 345-6789'
   },
   {
+    uid: 'user-student-3',
+    role: 'student',
+    status: 'active',
+    displayName: 'Ishaan Reddy',
+    email: 'ishaan.reddy@campusiq.edu',
+    departmentId: 'dept-cse',
+    departmentName: 'Computer Science & Engineering',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80'
+  },
+  {
     uid: 'user-faculty-1',
     role: 'faculty',
     status: 'active',
@@ -62,6 +72,17 @@ export const INITIAL_USERS: User[] = [
     departmentName: 'Computer Science & Engineering',
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     phone: '+1 (555) 456-7890'
+  },
+  {
+    uid: 'user-faculty-2',
+    role: 'faculty',
+    status: 'active',
+    displayName: 'Dr. Anand Raman',
+    email: 'anand.raman@campusiq.edu',
+    departmentId: 'dept-cse',
+    departmentName: 'Computer Science & Engineering',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+    phone: '+1 (555) 456-7891'
   },
   {
     uid: 'user-hod-1',
@@ -151,6 +172,7 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     rollNumber: '21CS042',
     departmentId: 'dept-cse',
     departmentName: 'Computer Science & Engineering',
+    section: 'CSE-A',
     semester: 6,
     academicYear: '2025-2026',
     cgpa: 8.78,
@@ -166,6 +188,7 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     rollNumber: '21CS078',
     departmentId: 'dept-cse',
     departmentName: 'Computer Science & Engineering',
+    section: 'CSE-A',
     semester: 6,
     academicYear: '2025-2026',
     cgpa: 6.35,
@@ -180,6 +203,7 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     rollNumber: '21CS099',
     departmentId: 'dept-cse',
     departmentName: 'Computer Science & Engineering',
+    section: 'CSE-B',
     semester: 6,
     academicYear: '2025-2026',
     cgpa: 9.20,
@@ -198,6 +222,14 @@ export const INITIAL_FACULTY: FacultyProfile[] = [
     departmentName: 'Computer Science & Engineering',
     designation: 'Associate Professor',
     assignedClasses: ['cls-301', 'cls-302']
+  },
+  {
+    facultyId: 'fac-202',
+    uid: 'user-faculty-2',
+    departmentId: 'dept-cse',
+    departmentName: 'Computer Science & Engineering',
+    designation: 'Assistant Professor',
+    assignedClasses: ['cls-303']
   }
 ];
 

@@ -26,6 +26,7 @@ export interface StudentProfile {
   rollNumber: string;
   departmentId: string;
   departmentName: string;
+  section: string;
   semester: number;
   academicYear: string;
   cgpa: number;
