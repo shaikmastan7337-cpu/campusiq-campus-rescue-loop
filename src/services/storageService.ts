@@ -94,7 +94,14 @@ function getInitialState(): AppState {
         ...student,
         section: student.section || INITIAL_STUDENTS.find((initialStudent) => initialStudent.uid === student.uid)?.section || 'Unassigned',
       }));
-      return { ...restored, users, faculty, classes, students };
+      INITIAL_STUDENTS.forEach((initialStudent) => {
+        if (!students.some((student) => student.studentId === initialStudent.studentId)) students.push(initialStudent);
+      });
+      const courses = [...restored.courses];
+      INITIAL_COURSES.forEach((initialCourse) => {
+        if (!courses.some((course) => course.courseId === initialCourse.courseId)) courses.push(initialCourse);
+      });
+      return { ...restored, users, faculty, classes, students, courses };
     }
   } catch (e) {
     console.error('Failed to parse saved state:', e);

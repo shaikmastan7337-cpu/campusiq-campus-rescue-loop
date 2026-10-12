@@ -63,6 +63,16 @@ export const INITIAL_USERS: User[] = [
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80'
   },
   {
+    uid: 'user-student-4',
+    role: 'student',
+    status: 'active',
+    displayName: 'Mira Shah',
+    email: 'mira.shah@campusiq.edu',
+    departmentId: 'dept-ds',
+    departmentName: 'Data Science & Artificial Intelligence',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+  },
+  {
     uid: 'user-faculty-1',
     role: 'faculty',
     status: 'active',
@@ -83,6 +93,16 @@ export const INITIAL_USERS: User[] = [
     departmentName: 'Computer Science & Engineering',
     avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     phone: '+1 (555) 456-7891'
+  },
+  {
+    uid: 'user-faculty-3',
+    role: 'faculty',
+    status: 'active',
+    displayName: 'Prof. Kavita Nair',
+    email: 'kavita.nair@campusiq.edu',
+    departmentId: 'dept-ds',
+    departmentName: 'Data Science & Artificial Intelligence',
+    avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80'
   },
   {
     uid: 'user-hod-1',
@@ -211,6 +231,21 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     mentorUid: 'user-mentor-1',
     learningPlatformActivityScore: 98,
     engagementScore: 95
+  },
+  {
+    studentId: 'stu-104',
+    uid: 'user-student-4',
+    rollNumber: '21DS014',
+    departmentId: 'dept-ds',
+    departmentName: 'Data Science & Artificial Intelligence',
+    section: 'DSAI-A',
+    semester: 6,
+    academicYear: '2025-2026',
+    cgpa: 8.42,
+    backlogs: 0,
+    mentorUid: 'user-mentor-1',
+    learningPlatformActivityScore: 87,
+    engagementScore: 91
   }
 ];
 
@@ -230,6 +265,14 @@ export const INITIAL_FACULTY: FacultyProfile[] = [
     departmentName: 'Computer Science & Engineering',
     designation: 'Assistant Professor',
     assignedClasses: ['cls-303']
+  },
+  {
+    facultyId: 'fac-203',
+    uid: 'user-faculty-3',
+    departmentId: 'dept-ds',
+    departmentName: 'Data Science & Artificial Intelligence',
+    designation: 'Associate Professor',
+    assignedClasses: ['cls-304']
   }
 ];
 
@@ -265,6 +308,14 @@ export const INITIAL_COURSES: Course[] = [
     credits: 3,
     semester: 6,
     departmentId: 'dept-cse'
+  },
+  {
+    courseId: 'crs-305',
+    name: 'Applied Machine Learning',
+    code: 'DS601',
+    credits: 4,
+    semester: 6,
+    departmentId: 'dept-ds'
   }
 ];
 
@@ -307,6 +358,19 @@ export const INITIAL_CLASSES: ClassSection[] = [
     semester: 6,
     departmentId: 'dept-cse',
     enrolledCount: 60
+  },
+  {
+    classId: 'cls-304',
+    courseId: 'crs-305',
+    courseName: 'Applied Machine Learning',
+    courseCode: 'DS601',
+    facultyUid: 'user-faculty-3',
+    facultyName: 'Prof. Kavita Nair',
+    section: 'DSAI-A',
+    academicYear: '2025-2026',
+    semester: 6,
+    departmentId: 'dept-ds',
+    enrolledCount: 42
   }
 ];
 
