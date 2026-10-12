@@ -448,7 +448,7 @@ export const AcceptanceTestTrackerModal: React.FC<AcceptanceTestTrackerModalProp
       );
     }
 
-    addLog('=== All 16 Tasks Executed Successfully One by One (100% Pass Rate) ===');
+    addLog('=== Demo checks finished. Results apply only to this browser session. ===');
     setCurrentRunningIndex(null);
     setRunningAll(false);
   };
@@ -469,14 +469,14 @@ export const AcceptanceTestTrackerModal: React.FC<AcceptanceTestTrackerModalProp
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  CampusIQ Master Acceptance Test Runner
+                  CampusIQ Demo Check Panel
                 </h3>
                 <span className="px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold">
-                  16/16 Verification Suite
+                  Local prototype
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Execute each institutional criterion step-by-step with real live assertions
+                Explore lightweight checks against the seeded data in this browser.
               </p>
             </div>
           </div>
@@ -490,16 +490,13 @@ export const AcceptanceTestTrackerModal: React.FC<AcceptanceTestTrackerModalProp
 
         {/* Action and Metric Bar */}
         <div className="p-4 bg-emerald-50/60 dark:bg-emerald-950/20 border-b border-emerald-100 dark:border-emerald-900/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <p className="text-xs text-amber-900 dark:text-amber-200 sm:max-w-xs">
+            Demo aid only: checks inspect or change local sample data. They do not verify production behavior, security, authentication, or authorization.
+          </p>
           <div className="flex items-center gap-3">
             <div className="text-xs font-semibold text-emerald-900 dark:text-emerald-200">
-              Pass Rate: <span className="font-extrabold text-base">{passedCount} / {tests.length}</span> (
-              {Math.round((passedCount / tests.length) * 100)}%)
+              Sample checks marked passed: <span className="font-extrabold text-base">{passedCount} / {tests.length}</span>
             </div>
-            {passedCount === tests.length && (
-              <span className="px-2 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-800 text-emerald-800 dark:text-emerald-100 text-[10px] font-bold">
-                All 16 Criteria Verified
-              </span>
-            )}
             {runningAll && (
               <span className="flex items-center gap-1.5 text-xs text-indigo-600 dark:text-indigo-400 font-semibold animate-pulse">
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -656,7 +653,7 @@ export const AcceptanceTestTrackerModal: React.FC<AcceptanceTestTrackerModalProp
         <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-500">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>All 16 Acceptance Criteria Deterministically Asserted</span>
+              <span>Local demo data only · not a production test suite</span>
           </div>
           <div className="flex items-center gap-2">
             <button

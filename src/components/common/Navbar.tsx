@@ -147,11 +147,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={onOpenTestModal}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold hover:bg-emerald-100 transition shadow-sm"
-            title="Open Acceptance Test Tracker (0/16 Spec Runner)"
+            title="Open illustrative checks against local demo data"
           >
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span className="hidden sm:inline">Acceptance Tests</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-emerald-200 dark:bg-emerald-800 text-[10px]">16/16</span>
+            <span className="hidden sm:inline">Demo Checks</span>
           </button>
 
           {/* Firebase / Cloud Firestore Schema Simulator Button */}

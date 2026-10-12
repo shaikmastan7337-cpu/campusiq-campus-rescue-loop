@@ -12,7 +12,7 @@ College advising systems typically suffer from **dashboard fatigue** and **broke
 - Students receive punitive notifications without actionable recovery pathways or transparent mathematical explanations of their status.
 
 ### Target Personas
-1. **Academic Mentors (e.g., Dr. Priya Sharma):** Reviews mentee cohorts, drills into timestamped evidence, simulates attendance recovery targets, and co-creates support plans.
+1. **Academic Mentors (e.g., Dr. Shweta Rao):** Reviews mentee records, explains dated attendance signals, simulates attendance recovery targets, and co-creates support plans.
 2. **Students (e.g., Neha Patel, Aarav Sharma):** Understands exactly how their success score is calculated, checks placement drive criteria, updates recovery milestones, and adds weekly reflections.
 3. **Faculty & HODs:** Manages attendance sessions and assignment evaluations with scoped departmental authorization.
 4. **Placement Coordinators:** Configures corporate recruitment drives with automated, criterion-by-criterion eligibility filtering across CGPA, active backlogs, and allowed branches.
@@ -29,8 +29,8 @@ College advising systems typically suffer from **dashboard fatigue** and **broke
 
 | Capability | Status | Implementation Details |
 | :--- | :--- | :--- |
-| **Grounded Success Score Engine** | ✅ **Implemented** | 5-factor weighted formula ($0.35 \times \text{Acad} + 0.25 \times \text{Attn} + 0.15 \times \text{LMS} + 0.15 \times \text{Skills} + 0.10 \times \text{Place}$). No substituted default values; tracks data coverage percentage and flags scores with $<70\%$ coverage as provisional. |
-| **Campus Rescue Loop (Interventions)** | ✅ **Implemented** | Shared plans featuring baseline metric snapshots (e.g., Neha Patel at $53.8\%$ attendance), dated milestones with toggle states, student reflections, mentor check-in notes, plan revision tracking, and before/after comparisons. |
+| **Grounded Success Score Engine** | ✅ **Implemented** | Six-factor nominal weighting: academic 35%, attendance 20%, LMS activity 15%, engagement 10%, skills 10%, and placement preparation 10%. Missing factors are excluded and the total is normalized over available weights; coverage below 70% is marked provisional. |
+| **Campus Rescue Loop (Interventions)** | ✅ **Implemented** | Shared plans include baseline snapshots, dated milestones, student progress updates, mentor check-ins, plan revisions, and observed before/after comparisons. Seeded Neha Patel example: 51.5% baseline attendance (late counts at 0.7) and 65.0% across 18 observed sessions through Oct 12. |
 | **Attendance "What If?" Simulator** | ✅ **Implemented** | Deterministic mathematical calculation of future sessions needed to reach 75% or 85% attendance, explicit assumptions, and a 1-click "Turn into Milestone" action. |
 | **Dynamic Placement Eligibility** | ✅ **Implemented** | Central `checkPlacementEligibility()` engine checking drive requirements (`minCgpa`, `maxBacklogs`, `departments`) dynamically across all drives without hardcoded columns. |
 | **Client-Side Reactive Persistence** | ✅ **Implemented** | Fully runnable offline via browser `localStorage` (`campusiq_state_v1`). Emits reactive events to keep all views synchronized in real time. |
@@ -47,12 +47,12 @@ College advising systems typically suffer from **dashboard fatigue** and **broke
 
 | Name | Role | ID | Primary Use Case in Demo |
 | :--- | :--- | :--- | :--- |
-| **Dr. Priya Sharma** | Academic Mentor | `usr-mentor` | Drives the Rescue Loop: inspects mentee Neha Patel, reviews dated evidence, runs scenario, checks plan milestones. |
-| **Neha Patel** | Student (Support Loop) | `usr-student-2` (`stu-102`) | In need of support: attendance dropped from 87.5% baseline to 53.8% in early Oct; recovered to 76.5% post-intervention. |
-| **Aarav Sharma** | Student (Healthy Baseline) | `usr-student` (`stu-101`) | High-performing student (CGPA 8.42, 94.7% attendance, 0 backlogs, eligible for Google, Microsoft, Infosys). |
-| **Vikram Malhotra** | Placement Officer | `usr-placement` | Verifies company drives and dynamically computed student applicant pipelines. |
-| **Prof. Rajesh Kumar** | Faculty Member | `usr-faculty` | Demonstrates scoped class attendance marking and assignment grading. |
-| **Dr. Aris Thorne** | Super Admin | `usr-super-admin` | Full system audit trail, database state reset, and governance view. |
+| **Dr. Shweta Rao** | Academic Mentor | `user-mentor-1` | Starts in the Rescue Loop view with Neha Patel selected; reviews evidence, runs the scenario, and checks plan milestones. |
+| **Neha Patel** | Student (Support Loop) | `user-student-2` (`stu-102`, `21CS078`) | Seeded support case: CGPA 6.35, one backlog, and an attendance recovery plan. |
+| **Aarav Sharma** | Student (Comparison) | `user-student-1` (`stu-101`, `21CS042`) | Comparison profile: CGPA 8.78 and no backlogs. |
+| **Ms. Priya Deshmukh** | Placement Officer | `user-placement-admin-1` | Reviews seeded company drives and eligibility reasons. |
+| **Prof. Rajesh Verma** | Faculty Member | `user-faculty-1` | Demonstrates attendance and assignment workflows. |
+| **Dr. Evelyn Vance** | Super Admin | `user-super-admin` | Opens the local demo administration and schema-preview view. |
 
 ---
 
@@ -62,26 +62,23 @@ Follow these steps for an end-to-end evaluation of the core rescue loop:
 
 ### Step 1: Open the App in Demo Mode (0:00 – 0:20)
 1. Launch the app (`http://localhost:5173/`).
-2. On the **Login Page**, click the **Academic Mentor** quick-login card (Dr. Priya Sharma).
+2. On the **Login Page**, click the **Academic Mentor** quick-login card (Dr. Shweta Rao).
 3. The app opens directly into the **Mentor Workspace**.
 
 ### Step 2: Spot the Student in Need of Support (0:20 – 0:50)
-1. Notice the **Mentee Cohort Overview** at the top. Click on **Neha Patel (CS-2023-045)**.
-2. Review the **Success Score Card** (61/100, "Needs Support", 100% data coverage). Click **"Why this score?"** to open the mathematical breakdown modal showing verified component marks and dated support signals.
-3. Observe the **Evidence Timeline**:
-   - Baseline: 87.5% attendance in Sept.
-   - 6 missed sessions between Sept 29 – Oct 07 dropping attendance to 53.8%.
-   - Triggered alert: *Critical Attendance Deficit (<60%)*.
+1. Neha Patel (`21CS078`) is selected by default in the mentor view.
+2. Review her success score explanation and the dated attendance records behind the support prompt.
+3. Attendance moved from six present sessions out of six in early September to a weighted 51.5% across 13 sessions through Oct 07 (six present, one late weighted at 0.7, and six absent).
 
 ### Step 3: Run the "What If?" Scenario & Inspect Shared Plan (0:50 – 1:20)
 1. Look at the **Attendance Recovery Scenario ("What If?")** card.
-2. Move the target slider to **75%** (minimum threshold). Notice the calculation: Neha needs **9 consecutive attended sessions** across remaining classes.
+2. Set the "sessions ahead" control to **8**. The scenario shows about **75.8%** if Neha attends all eight future sessions; the card labels this as a hypothetical scenario.
 3. Click **"Turn into Plan Milestone"** to see it added as a concrete target.
 4. Review the **Active Support Plan (Campus Rescue Loop)** card:
-   - **Baseline Snapshot:** Recorded at $53.8\%$ attendance on Oct 08.
-   - **Current Observed:** $76.5\%$ attendance (+22.7% net improvement).
-   - Review the completed milestones and toggle an upcoming milestone (e.g., *Peer Study Pod*).
-   - Read the logged **Student Reflection** ("Feeling much better after catching up on OS labs...") and **Mentor Check-in Notes**.
+   - **Baseline Snapshot:** 51.5% weighted attendance across 13 sessions before the plan began.
+   - **Current Observed:** 65.0% weighted attendance across 18 sessions through Oct 12 (+13.5 percentage points).
+   - Review the completed milestones and toggle an upcoming milestone, such as joining the peer-assisted tutorial circle.
+   - Read the seeded student progress update and mentor check-in note.
 
 ### Step 4: Verify Student Self-Service View (1:20 – 1:40)
 1. Use the **Role Switcher** in the top navigation bar to switch to **Student (Neha Patel)**.
@@ -92,11 +89,11 @@ Follow these steps for an end-to-end evaluation of the core rescue loop:
    - Notice Aarav's healthy score (86/100), absence of distress alerts, and placement eligibility overview.
 
 ### Step 5: Verify Placement Eligibility & Acceptance Suite (1:40 – 2:00)
-1. In the top bar, switch to **Placement Officer** (Vikram Malhotra).
+1. In the top bar, switch to **Placement Officer** (Ms. Priya Deshmukh).
 2. Observe how company cards (Google, Microsoft, Infosys, Cognizant) dynamically calculate eligibility:
    - Aarav is fully eligible for top-tier drives.
-   - Neha is flagged with specific unmet criteria (`CGPA 6.80 < 7.50 cutoff`).
-3. Click **Acceptance Tests** in the navigation bar to run the automated **16/16 Acceptance Test Suite**. All test assertions execute synchronously and pass.
+   - Neha is below the Microsoft CGPA cutoff (6.35 < 7.50) and has one backlog while the drive allows zero.
+3. The **Acceptance Checks** panel is a demo aid; its checks are illustrative and do not establish production security or authorization.
 
 ---
 

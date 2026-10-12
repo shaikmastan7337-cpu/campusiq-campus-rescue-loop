@@ -140,7 +140,7 @@ export function App() {
               onClick={() => setShowTestModal(true)}
               className="hover:text-indigo-600 dark:hover:text-indigo-400 font-medium"
             >
-              16/16 Acceptance Test Runner
+              Demo Checks (local prototype)
             </button>
             <button
               onClick={() => setShowFirebaseModal(true)}

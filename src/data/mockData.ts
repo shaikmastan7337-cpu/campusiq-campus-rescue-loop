@@ -545,7 +545,7 @@ export const INITIAL_ATTENDANCE: AttendanceRecord[] = [
   },
 
   // Phase 2 (Sept 22 - Oct 07): Downward decline triggering Review Prompt
-  // In this 7-session span: 5 absent, 1 late, 1 present -> attendance dropped to ~50%
+  // Six absent and one late in this 7-session span; the score weights late attendance at 0.7.
   {
     id: 'att-102-07',
     studentId: 'stu-102',
@@ -1099,13 +1099,13 @@ export const INITIAL_INTERVENTIONS: Intervention[] = [
     createdAt: '2026-10-08T11:00:00Z',
     updatedAt: '2026-10-12T10:15:00Z',
     escalated: true,
-    escalationReason: 'Attendance dropped to 53.8% (7/13 sessions) between Sept 22 and Oct 07.',
+    escalationReason: 'Attendance was 51.5% (6 present + 1 late weighted at 0.7 across 13 sessions) before support began.',
     baselineSnapshot: {
       recordedAt: '2026-10-08T11:00:00Z',
-      attendanceRate: 53.8,
-      attendanceNumerator: 7,
+      attendanceRate: 51.5,
+      attendanceNumerator: 6.7,
       attendanceDenominator: 13,
-      attendanceDetail: '7 attended of 13 scheduled sessions (53.8%) prior to plan initiation',
+      attendanceDetail: '6 present + 1 late (0.7 weight) of 13 scheduled sessions (51.5%) prior to plan initiation',
       cgpa: 6.35,
       academicScore: 56,
     },
