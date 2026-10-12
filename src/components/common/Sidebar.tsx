@@ -100,7 +100,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, currentTab, onSelectTab 
     }
   };
 
-  const navItems = getNavItems();
+  const navItems: NavItem[] = [
+    ...getNavItems(),
+    { id: 'access-directory', label: 'Leadership Directory', icon: Users },
+  ];
 
   return (
     <aside className="w-full md:w-64 flex-shrink-0">

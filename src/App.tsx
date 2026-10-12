@@ -4,6 +4,7 @@ import { Navbar } from './components/common/Navbar';
 import { Sidebar } from './components/common/Sidebar';
 import { AcceptanceTestTrackerModal } from './components/common/AcceptanceTestTrackerModal';
 import { FirebaseConfigModal } from './components/common/FirebaseConfigModal';
+import { AccessDirectory } from './components/common/AccessDirectory';
 
 import { LoginPage } from './components/auth/LoginPage';
 
@@ -122,7 +123,9 @@ export function App() {
 
           {/* Active Role Dashboard View */}
           <main className="flex-1 w-full min-w-0">
-            {renderDashboardByRole()}
+            {currentTab === 'access-directory'
+              ? <AccessDirectory currentUser={appState.currentUser} />
+              : renderDashboardByRole()}
           </main>
         </div>
       </div>

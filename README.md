@@ -35,6 +35,7 @@ College advising systems typically suffer from **dashboard fatigue** and **broke
 | **Dynamic Placement Eligibility** | ✅ **Implemented** | Central `checkPlacementEligibility()` engine checking drive requirements (`minCgpa`, `maxBacklogs`, `departments`) dynamically across all drives without hardcoded columns. |
 | **Client-Side Reactive Persistence** | ✅ **Implemented** | Fully runnable offline via browser `localStorage` (`campusiq_state_v1`). Emits reactive events to keep all views synchronized in real time. |
 | **Role-Specific Demo Views** | ✅ **Implemented (Demo Only)** | 8 personas with switchable dashboards. This is a client-side demo, not authentication or server-enforced authorization. |
+| **Role-Aware Leadership Directory** | ✅ **Implemented (Demo Only)** | Super administrators can browse all demo users; other roles can view and contact super administrators. Directory visibility is a client-side prototype rule, not production authorization. |
 | **Local Grounded Recommendations** | ✅ **Implemented (Deterministic)** | Recommendations are generated locally from available student records; no AI provider or API key is required. |
 | **Interactive Acceptance Check Panel** | 🟡 **Demo Aid** | Provides an interactive checklist with sample checks. It is not a security test suite and does not establish authentication, authorization, or production readiness. |
 | **Firestore Schema Preview** | 🟡 **Illustrative** | A modeled collection/schema view is available in the UI; the application does not connect to Firestore. |
