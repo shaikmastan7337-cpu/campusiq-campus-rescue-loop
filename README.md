@@ -1,189 +1,350 @@
-# CampusIQ — Campus Rescue Loop
-> **Closed-Loop Student Success & Academic Intervention Platform**  
-> *A grounded, evidence-based system for mentors and students to detect academic distress, co-create actionable recovery plans, track milestones, and measure verifiable outcomes.*
+CampusIQ — Campus Rescue Loop
+
+### A Student Success and Academic Recovery Platform
+
+CampusIQ is a web-based platform designed to help students who are struggling with attendance, academics, and placement preparation. Instead of just showing alerts or low scores, it helps mentors and students understand the problem, create a recovery plan, and track progress over time.
+
+The main idea behind Campus Rescue Loop is simple: identify a problem, understand its cause, decide what to do next, and check whether the action actually helped.
+
+The project focuses on making academic support more transparent and useful for both students and mentors.
+
+Problem Statement
+
+Many college advising systems can identify students who are falling behind, but they do not always provide a proper way to help them recover.
+
+Some common problems are:
+
+- Students receive attendance or academic alerts without clear suggestions on what to do next.
+- Mentors record discussions in notes, but there is no proper way to track agreed actions and deadlines.
+- It is difficult to compare a student's academic condition before and after an intervention.
+- Students often do not understand how their academic success score is calculated.
+- Placement eligibility can be confusing when companies have different CGPA, backlog, and branch requirements.
+
+CampusIQ addresses these problems by bringing academic monitoring, recovery planning, progress tracking, and placement eligibility into one platform.
+
+Target Users
+
+The application has four main user groups.
+
+**1\. Academic Mentors**
+
+Mentors can review student records, identify areas that need attention, check attendance trends, simulate possible recovery scenarios, and create support plans with students.
+
+**2\. Students**
+
+Students can understand their success scores, view their support plans, update milestones, write weekly reflections, and check whether they meet placement drive requirements.
+
+**3\. Faculty Members and HODs**
+
+Faculty members can manage attendance and assignment evaluations. The demo also supports assigning faculty members to specific branches, sections, semesters, and academic years.
+
+**4\. Placement Coordinators**
+
+Placement coordinators can configure company recruitment drives and check student eligibility based on CGPA, active backlogs, and permitted departments.
+
+Project Objective
+
+The objective of CampusIQ is to turn academic alerts into a proper support process.
+
+The platform combines an explainable success score, an attendance recovery simulator, shared mentor-student plans, and placement eligibility checks. It also records baseline values and later observations so that mentors and students can see whether their recovery efforts are making a difference.
 
 ---
 
-## 🎯 Target Problem & Users
+## ⚙️ Features and Implementation Status
 
-College advising systems typically suffer from **dashboard fatigue** and **broken intervention loops**:
-- Advising platforms show alerts ("Attendance drop: 62%") but provide no shared workspace to agree on concrete recovery commitments.
-- Interventions are logged as static notes without baseline metric snapshots, milestone tracking, or before-and-after outcome comparisons.
-- Students receive punitive notifications without actionable recovery pathways or transparent mathematical explanations of their status.
+| Feature | Status | Description |
+| --- | --- | --- |
+| Success Score Calculation | Implemented | Calculates a score using available academic and student activity data, with normalized weights and a provisional status when data coverage is low. |
+| Campus Rescue Loop | Implemented | Supports shared recovery plans, baseline snapshots, milestones, progress updates, mentor check-ins, and before-and-after comparisons. |
+| Attendance Simulator | Implemented | Calculates how many future classes a student needs to attend to reach a target attendance percentage. |
+| Placement Eligibility | Implemented | Checks CGPA, backlog limits, and allowed departments for each placement drive. |
+| Local Data Persistence | Implemented | Saves demo data in browser localStorage and updates connected views through reactive events. |
+| Role-Based Demo Views | Implemented for Demo | Includes eight switchable demo personas with different dashboards and available actions. |
+| Leadership Directory | Implemented for Demo | Allows the super administrator to view demo users, while other roles can view and contact super administrators. |
+| Faculty Assignments | Implemented for Demo | Supports faculty assignments to specific academic cohorts and filters attendance rosters accordingly. |
+| Student Recommendations | Implemented | Generates recommendations using local rules and the information available in student records. |
+| Acceptance Checks | Demo Aid | Provides an interactive checklist for demonstrating selected application behaviors. |
+| Firestore Schema Preview | Illustrative | Shows a possible database structure but does not connect to an actual Firestore database. |
+| Live Backend Synchronization | Future Work | Could be added using a backend, Firestore rules, real-time synchronization, and institutional system integrations. |
+| Cloud AI Integration | Future Work | Could be added through a secure backend gateway with privacy filtering and an external AI provider. |
 
-### Target Personas
-1. **Academic Mentors (e.g., Dr. Shweta Rao):** Reviews mentee records, explains dated attendance signals, simulates attendance recovery targets, and co-creates support plans.
-2. **Students (e.g., Neha Patel, Aarav Sharma):** Understands exactly how their success score is calculated, checks placement drive criteria, updates recovery milestones, and adds weekly reflections.
-3. **Faculty & HODs:** Manages attendance sessions and assignment evaluations with scoped departmental authorization.
-4. **Placement Coordinators:** Configures corporate recruitment drives with automated, criterion-by-criterion eligibility filtering across CGPA, active backlogs, and allowed branches.
+The application is currently a client-side demo. Features marked as implemented are available in the prototype, but they should not be interpreted as production-ready authentication or server-side security.
 
----
+ Demo Users
 
-## 💡 One-Sentence Solution
+The project includes sample personas to demonstrate how different users interact with the application.
 
-**Campus Rescue Loop** transforms passive academic alerts into a transparent, closed-loop recovery workflow—combining mathematically explainable success scores, an interactive attendance scenario simulator, and shared mentor-student recovery plans with verifiable before/after outcome tracking.
+| Name | Role | Demo ID | Main Use |
+| --- | --- | --- | --- |
+| Dr. Shweta Rao | Academic Mentor | `user-mentor-1` | Reviews Neha's academic status and manages her recovery plan. |
+| Neha Patel | Student | `user-student-2` | Demonstrates an attendance recovery plan and academic support workflow. |
+| Aarav Sharma | Student | `user-student-1` | Provides a comparison profile with a higher CGPA and no backlogs. |
+| Ms. Priya Deshmukh | Placement Officer | `user-placement-admin-1` | Reviews company drives and student eligibility. |
+| Prof. Rajesh Verma | Faculty Member | `user-faculty-1` | Demonstrates attendance and assignment-related workflows. |
+| Dr. Evelyn Vance | Super Admin | `user-super-admin` | Demonstrates administrative features and the schema preview. |
 
----
+The demo contains eight switchable personas in total. The table lists the main personas used in the walkthrough.
 
-## 🔍 Feature Status: Implemented vs. Simulated vs. Future Work
+ Campus Rescue Loop: How It Works
 
-| Capability | Status | Implementation Details |
-| :--- | :--- | :--- |
-| **Grounded Success Score Engine** | ✅ **Implemented** | Six-factor nominal weighting: academic 35%, attendance 20%, LMS activity 15%, engagement 10%, skills 10%, and placement preparation 10%. Missing factors are excluded and the total is normalized over available weights; coverage below 70% is marked provisional. |
-| **Campus Rescue Loop (Interventions)** | ✅ **Implemented** | Shared plans include baseline snapshots, dated milestones, student progress updates, mentor check-ins, plan revisions, and observed before/after comparisons. Seeded Neha Patel example: 51.5% baseline attendance (late counts at 0.7) and 65.0% across 18 observed sessions through Oct 12. |
-| **Attendance "What If?" Simulator** | ✅ **Implemented** | Deterministic mathematical calculation of future sessions needed to reach 75% or 85% attendance, explicit assumptions, and a 1-click "Turn into Milestone" action. |
-| **Dynamic Placement Eligibility** | ✅ **Implemented** | Central `checkPlacementEligibility()` engine checking drive requirements (`minCgpa`, `maxBacklogs`, `departments`) dynamically across all drives without hardcoded columns. |
-| **Client-Side Reactive Persistence** | ✅ **Implemented** | Fully runnable offline via browser `localStorage` (`campusiq_state_v1`). Emits reactive events to keep all views synchronized in real time. |
-| **Role-Specific Demo Views** | ✅ **Implemented (Demo Only)** | 8 personas with switchable dashboards. This is a client-side demo, not authentication or server-enforced authorization. |
-| **Role-Aware Leadership Directory** | ✅ **Implemented (Demo Only)** | Super administrators can browse all demo users; other roles can view and contact super administrators. Directory visibility is a client-side prototype rule, not production authorization. |
-| **Faculty Section Assignments** | ✅ **Implemented (Demo Only)** | Campus admins assign a faculty member to a course within a branch, section, semester, and academic year. Seeded examples cover CSE-A, CSE-B, and DSAI-A. Faculty attendance rosters show only students matching their assigned cohort. |
-| **Local Grounded Recommendations** | ✅ **Implemented (Deterministic)** | Recommendations are generated locally from available student records; no AI provider or API key is required. |
-| **Interactive Acceptance Check Panel** | 🟡 **Demo Aid** | Provides an interactive checklist with sample checks. It is not a security test suite and does not establish authentication, authorization, or production readiness. |
-| **Firestore Schema Preview** | 🟡 **Illustrative** | A modeled collection/schema view is available in the UI; the application does not connect to Firestore. |
-| **Live Backend Synchronization** | ⏳ **Future Work** | Server-side Firebase Firestore rules enforcement, real-time WebSocket sync across multiple physical devices, and automated SIS/ERP database webhooks. |
-| **Cloud AI Gateway** | ⏳ **Future Work** | Backend proxy with OAuth token exchange, differential privacy filtering, and enterprise Gemini 1.5 Pro API calls. |
+The Rescue Loop is the main feature of the project. It helps mentors and students work together instead of treating an academic alert as the end of the process.
 
----
+The workflow follows these steps:
 
-## 👥 Demo Personas
+1. **Identify the issue:** Review attendance, academic performance, or other available student data.
+2. **Understand the evidence:** Check the records and dates behind the support signal.
+3. **Create a recovery plan:** Agree on specific actions and targets with the student.
+4. **Track milestones:** Mark completed actions, update progress, and add weekly reflections.
+5. **Review progress:** Record mentor check-ins and revise the plan when necessary.
+6. **Compare outcomes:** Compare the original baseline with the latest observed results.
 
-| Name | Role | ID | Primary Use Case in Demo |
-| :--- | :--- | :--- | :--- |
-| **Dr. Shweta Rao** | Academic Mentor | `user-mentor-1` | Starts in the Rescue Loop view with Neha Patel selected; reviews evidence, runs the scenario, and checks plan milestones. |
-| **Neha Patel** | Student (Support Loop) | `user-student-2` (`stu-102`, `21CS078`) | Seeded support case: CGPA 6.35, one backlog, and an attendance recovery plan. |
-| **Aarav Sharma** | Student (Comparison) | `user-student-1` (`stu-101`, `21CS042`) | Comparison profile: CGPA 8.78 and no backlogs. |
-| **Ms. Priya Deshmukh** | Placement Officer | `user-placement-admin-1` | Reviews seeded company drives and eligibility reasons. |
-| **Prof. Rajesh Verma** | Faculty Member | `user-faculty-1` | Demonstrates attendance and assignment workflows. |
-| **Dr. Evelyn Vance** | Super Admin | `user-super-admin` | Opens the local demo administration and schema-preview view. |
+For example, Neha Patel's seeded support case begins with a weighted attendance baseline of 51.5% across 13 sessions. Her observed attendance later reaches 65.0% across 18 sessions through October 12.
 
----
-
-## ⏱️ 2-Minute Walkthrough Script
-
-Follow these steps for an end-to-end evaluation of the core rescue loop:
-
-### Step 1: Open the App in Demo Mode (0:00 – 0:20)
-1. Launch the app (`http://localhost:5173/`).
-2. On the **Login Page**, click the **Academic Mentor** quick-login card (Dr. Shweta Rao).
-3. The app opens directly into the **Mentor Workspace**.
-
-### Step 2: Spot the Student in Need of Support (0:20 – 0:50)
-1. Neha Patel (`21CS078`) is selected by default in the mentor view.
-2. Review her success score explanation and the dated attendance records behind the support prompt.
-3. Attendance moved from six present sessions out of six in early September to a weighted 51.5% across 13 sessions through Oct 07 (six present, one late weighted at 0.7, and six absent).
-
-### Step 3: Run the "What If?" Scenario & Inspect Shared Plan (0:50 – 1:20)
-1. Look at the **Attendance Recovery Scenario ("What If?")** card.
-2. Set the "sessions ahead" control to **8**. The scenario shows about **75.8%** if Neha attends all eight future sessions; the card labels this as a hypothetical scenario.
-3. Click **"Turn into Plan Milestone"** to see it added as a concrete target.
-4. Review the **Active Support Plan (Campus Rescue Loop)** card:
-   - **Baseline Snapshot:** 51.5% weighted attendance across 13 sessions before the plan began.
-   - **Current Observed:** 65.0% weighted attendance across 18 sessions through Oct 12 (+13.5 percentage points).
-   - Review the completed milestones and toggle an upcoming milestone, such as joining the peer-assisted tutorial circle.
-   - Read the seeded student progress update and mentor check-in note.
-
-### Step 4: Verify Student Self-Service View (1:20 – 1:40)
-1. Use the **Role Switcher** in the top navigation bar to switch to **Student (Neha Patel)**.
-2. Scroll to her **Active Academic Support Plan** section:
-   - Notice Neha can check off her own milestones and submit a new weekly reflection.
-   - She can interact with her personal Attendance Scenario simulator.
-3. Switch role to **Aarav Sharma (Student)**:
-   - Notice Aarav's healthy score (86/100), absence of distress alerts, and placement eligibility overview.
-
-### Step 5: Verify Placement Eligibility & Acceptance Suite (1:40 – 2:00)
-1. In the top bar, switch to **Placement Officer** (Ms. Priya Deshmukh).
-2. Observe how company cards (Google, Microsoft, Infosys, Cognizant) dynamically calculate eligibility:
-   - Aarav is fully eligible for top-tier drives.
-   - Neha is below the Microsoft CGPA cutoff (6.35 < 7.50) and has one backlog while the drive allows zero.
-3. The **Acceptance Checks** panel is a demo aid; its checks are illustrative and do not establish production security or authorization.
+That is an improvement of 13.5 percentage points. The comparison gives the mentor and student a concrete way to discuss progress rather than relying only on a warning message.
 
 ---
 
-## 🛠️ Installation & Running Locally
+## 📊 Success Score Calculation
+
+CampusIQ uses a weighted score to summarize the information available about a student's academic progress and preparation.
+
+The implemented score engine uses six factors:
+
+| Factor | Weight |
+| --- | --- |
+| Academic performance | 35% |
+| Attendance | 20% |
+| LMS activity | 15% |
+| Engagement | 10% |
+| Skills | 10% |
+| Placement preparation | 10% |
+| **Total** | **100%** |
+
+The calculation considers only factors for which data is available. The remaining weights are normalized so that missing information does not automatically count as zero.
+
+Data coverage is also calculated separately. If coverage falls below 70%, the score is marked as provisional to indicate that there is not enough information for a reliable overall assessment.
+
+This helps students understand that the score is based on available evidence rather than an unexplained number.
+
+**Implementation note:** The six-factor weighting above describes the implemented feature set. The separate architecture notes currently contain a different five-factor formula, so the documentation and code should be aligned before final evaluation.
+
+---
+
+Attendance Recovery Simulator
+
+The attendance simulator allows students and mentors to explore possible attendance outcomes before committing to a recovery target.
+
+Users can select the number of upcoming sessions and see the projected attendance if the student attends those sessions.
+
+The simulator supports targets such as 75% and 85% attendance and calculates the number of future sessions required to reach them. It also displays the assumptions behind the calculation.
+
+For example, in Neha's seeded scenario, attending the next eight sessions would result in approximately 75.8% attendance.
+
+This is a hypothetical projection, not an observed result. Once a suitable target is selected, the user can convert it into a milestone in the recovery plan.
+
+Dynamic Placement Eligibility
+
+Different companies have different placement requirements. CampusIQ checks these requirements dynamically instead of relying on fixed eligibility labels.
+
+The placement engine evaluates three main criteria:
+
+- **Minimum CGPA:** Whether the student's CGPA meets the company's cutoff.
+- **Active backlogs:** Whether the student is within the permitted backlog limit.
+- **Allowed departments:** Whether the student's department is accepted for the drive.
+
+The `checkPlacementEligibility()` function evaluates the student against each drive's configured requirements and provides a breakdown of the results.
+
+For example, the seeded demo shows Neha with a CGPA of 6.35 and one backlog. If a Microsoft drive requires a CGPA of at least 7.50 and allows no active backlogs, she does not meet those two requirements.
+
+Aarav's seeded profile has a CGPA of 8.78 and no backlogs, making him eligible for drives whose other requirements he also satisfies.
+
+This makes the result easier to understand because students can see which specific criteria they meet or need to improve.
+
+ Two-Minute Demo Walkthrough
+
+Follow these steps to demonstrate the main features during a project evaluation.
+
+### Step 1: Open the Application (0:00–0:20)
+
+1. Start the application using `npm run dev`.
+2. Open `http://localhost:5173/`.
+3. On the login page, select the Academic Mentor demo account for Dr. Shweta Rao.
+4. The application opens the mentor workspace.
+
+### Step 2: Review Neha's Academic Status (0:20–0:50)
+
+1. Check that Neha Patel (`21CS078`) is selected.
+2. Review her success score and the records behind the attendance support signal.
+3. Examine the dated attendance data.
+
+The seeded records show six present sessions out of six in early September. By October 7, her weighted attendance is 51.5% across 13 sessions, including six present sessions, one late session weighted at 0.7, and six absences.
+
+### Step 3: Test the Recovery Simulator (0:50–1:20)
+
+1. Open the Attendance Recovery Scenario card.
+2. Set the number of future sessions to eight.
+3. Review the hypothetical attendance projection of approximately 75.8% if all eight sessions are attended.
+4. Click **Turn into Plan Milestone**.
+5. Review the Active Support Plan, including its baseline snapshot, completed milestones, progress update, and mentor check-in.
+6. Check the later observed attendance of 65.0% across 18 sessions through October 12.
+
+You can also toggle an upcoming milestone, such as joining the peer-assisted tutorial circle, to demonstrate progress tracking.
+
+### Step 4: Switch to Student View (1:20–1:40)
+
+1. Use the role switcher to select Neha Patel.
+2. Open her Active Academic Support Plan.
+3. Update a milestone or submit a weekly reflection.
+4. Test the attendance simulator from the student dashboard.
+5. Switch to Aarav Sharma and compare his score, support signals, and placement overview.
+
+### Step 5: Check Placement Eligibility (1:40–2:00)
+
+1. Switch to Ms. Priya Deshmukh's Placement Officer view.
+2. Review the seeded company drives, including Google, Microsoft, Infosys, and Cognizant.
+3. Compare Aarav's and Neha's eligibility results.
+4. Open the Acceptance Checks panel to demonstrate its interactive checklist.
+
+The acceptance panel is only a demo aid. It does not prove that the application has secure authentication or production-ready authorization.
+
+---
+
+## 🛠️ Installation and Setup
 
 ### Prerequisites
-- Node.js 18+ (tested on Node.js 20 & 22)
-- npm 9+
 
-### Commands
-```bash
-# 1. Install dependencies
+- Node.js 18 or later.
+- npm 9 or later.
+
+The project has been tested with Node.js 20 and 22.
+
+### Run the Project Locally
+
+Open a terminal in the project directory and run:
+
+```
+# Install project dependencies
 npm install
 
-# 2. Start the local Vite development server
+# Start the development server
 npm run dev
 
-# 3. Build for production and verify TypeScript compliance
+# Build the project and check TypeScript
 npm run build
 
-# 4. Preview the production build locally
+# Preview the production build
 npm run preview
 ```
 
-The application runs at `http://localhost:5173/` by default.
+The development server normally runs at:
 
----
+`http://localhost:5173/`
 
-## 🏗️ Architecture & Data Flow
+ Architecture
 
-```mermaid
-graph TD
-    UI[React 19 Tailwind Components] --> SM[storageService State Manager]
-    UI --> AS[analyticsService Score Engine]
-    UI --> PE[placementEligibility Engine]
-    UI --> GS[geminiService Grounded Reasoning]
-    
-    SM <--> LS[(Browser localStorage)]
-    SM --> RL[Rescue Loop Interventions]
-    SM --> AL[Client-Side Audit Logs]
-    SM --> NT[Reactive In-App Notifications]
-    
-    AS --> SS[Success Score + Support Signals]
-    PE --> ER[Drive Eligibility Results]
-```
+The project uses React 19 and Tailwind CSS for the user interface, with separate services for state management, analytics, placement eligibility, and recommendations.
 
-### 1. Client-Side State & Persistence (`src/services/storageService.ts`)
-- Manages 18 normalized collections in memory with auto-serialization to `localStorage` under the key `campusiq_state_v1`.
-- Emits subscriber change events on every state mutation so UI widgets update reactively without page reloads.
-- Contains a 1-click **Reset Demo Data** option in the navbar to return to fresh default seed data at any time.
+The current application runs entirely in the browser.
 
-### 2. Analytics & Explainability Engine (`src/services/analyticsService.ts`)
-- **Formula:**
-  $$\text{Total Score} = 0.35 \times \text{Academic} + 0.25 \times \text{Attendance} + 0.15 \times \text{LMS} + 0.15 \times \text{Skills} + 0.10 \times \text{Placement}$$
-- Calculates exact **data coverage percentage**. When data availability falls below 70%, the score is prominently marked as **Provisional**.
-- Session deduplication prevents inflated counts for multiple attendance entries on the same date/class.
-- Emits dated, non-punitive `SupportSignal` review prompts rather than generic alert banners.
+### 1\. State Management — `storageService.ts`
 
-### 3. Dynamic Placement Engine (`src/services/placementEligibility.ts`)
-- Evaluates individual student credentials against dynamic placement drive rules:
-  - Minimum CGPA threshold (`minCgpa`).
-  - Active backlog limit (`maxBacklogs`).
-  - Allowed degree departments (`departments`).
-- Provides itemized criteria breakdowns explaining why an applicant is eligible or what criteria remain unmet.
+The storage service manages 18 normalized collections in memory and saves the data to browser `localStorage` using the key `campusiq_state_v1`.
 
-### 4. Local Grounded Recommendations (`src/services/geminiService.ts`)
-- Uses deterministic local rules and does not call an AI provider.
-- Recommendations reference the student score components and profile fields available to the demo.
-- No provider API key is needed for the feature.
+Whenever data changes, the service emits events so that connected parts of the interface can update without reloading the page.
 
----
+The application also provides a Reset Demo Data option to restore the initial sample data.
 
-## 🔒 Security, Privacy & Limitations
+### 2\. Analytics — `analyticsService.ts`
 
-1. **Demo Mode:** This application runs entirely client-side using synthetic mock data. It does not connect to live institutional databases or external identity providers.
-2. **Local Storage:** All student plans, check-ins, and grades persist inside the browser's `localStorage`. Clearing browser data will reset modifications to the initial seed state.
-3. **Audit Logging:** Administrative and mentoring actions append timestamped audit entries to the client-side audit log. In production, this would be backed by an append-only cloud ledger.
-4. **Advisory Decision Support:** All calculated scores, support signals, and scenario projections are strictly decision-support tools meant to facilitate human mentor-student conversations, not automated gatekeepers.
+The analytics service calculates student scores, checks data coverage, and generates support signals.
 
----
+It also handles attendance session deduplication so that multiple entries for the same date and class do not inflate the session count.
 
-## 📄 License
-No open-source license has been added; the repository is shared for hackathon judging and review.
+The support signals are intended to encourage a review and discussion with the student rather than act as punitive alerts.
 
-## 🚀 Deployment
+### 3\. Placement Eligibility — `placementEligibility.ts`
 
-The repository includes a GitHub Actions workflow that builds the Vite app and deploys the `dist` output to GitHub Pages when changes are pushed to `main`. In the repository settings, enable **Pages → Build and deployment → Source: GitHub Actions** if it is not enabled automatically. After the first successful workflow run, the project site URL is:
+This service compares student records against the requirements configured for each placement drive.
 
-[https://shaikmastan7337-cpu.github.io/campusiq-campus-rescue-loop/](https://shaikmastan7337-cpu.github.io/campusiq-campus-rescue-loop/)
+It checks CGPA, backlog limits, and allowed departments, then returns a criterion-by-criterion result.
 
-The site is a static client-side demo using fictional seed data and browser-local storage. It has no live backend or real authentication.
+### 4\. Recommendations — `geminiService.ts`
+
+Despite its filename, the current recommendation implementation uses deterministic local rules. It does not call an external AI service and does not require an AI API key.
+
+Recommendations are generated using the student information and score components available in the demo.
+
+### Data Flow
+
+The main flow of the application is:
+
+1. The React interface reads and updates application state.
+2. The storage service persists changes in localStorage.
+3. The analytics service calculates scores and support signals.
+4. The placement service evaluates company drive requirements.
+5. The recommendation service generates suggestions from available records.
+6. The interface refreshes when relevant state changes occur.
+
+Security, Privacy, and Limitations
+
+CampusIQ is currently a prototype intended for demonstrations and project evaluation.
+
+- **No live institutional connection:** The application uses fictional sample records and does not connect to a college SIS, ERP, or external identity provider.
+- **Browser-based persistence:** Student plans, attendance data, and other changes are stored locally in the browser. Clearing the relevant browser data can remove saved changes and restore the initial seed state.
+- **Demo role switching:** The role switcher demonstrates different dashboards, but it is not a real login system.
+- **Client-side permissions:** Directory visibility and faculty cohort filtering are prototype behaviors, not server-enforced authorization.
+- **Local audit logs:** Actions can generate timestamped audit entries, but these logs are stored on the client and are not an immutable cloud audit trail.
+- **No live AI integration:** Recommendations currently use deterministic local rules.
+- **Decision support only:** Scores, alerts, and attendance projections are intended to support conversations between students and mentors. They should not be used as the sole basis for academic or placement decisions.
+
+For production use, the project would need secure authentication, server-side authorization, validated APIs, protected institutional data, reliable multi-device synchronization, and appropriate audit and privacy controls.
+
+Future Improvements
+
+The next stage of development could focus on the following areas:
+
+1. **Backend integration:** Connect the application to a secure backend and Firestore or another suitable database.
+2. **Real-time synchronization:** Allow students and mentors to see updates across different devices.
+3. **Institutional integration:** Connect attendance, grades, and enrollment data from existing college systems.
+4. **Secure role-based access:** Enforce permissions on the server rather than relying on client-side rules.
+5. **Cloud AI gateway:** Add an optional backend service for AI-assisted recommendations, with appropriate privacy filtering and access controls.
+6. **Automated testing:** Add unit tests for score calculations, attendance projections, placement eligibility, and intervention workflows.
+7. **Improved outcome reporting:** Track which interventions are associated with measurable improvements over time.
+
+These improvements would help move CampusIQ from a local demonstration to a platform that could be evaluated for real institutional use.
+
+Deployment
+
+The repository includes a GitHub Actions workflow that builds the Vite application and deploys the generated `dist` directory to GitHub Pages when changes are pushed to the `main` branch.
+
+To enable deployment:
+
+1. Open the repository's Settings.
+2. Go to Pages.
+3. Set the build and deployment source to **GitHub Actions**.
+4. Push changes to `main` and check the workflow result.
+
+The configured project URL is:
+
+https://shaikmastan7337-cpu.github.io/campusiq-campus-rescue-loop/
+
+The deployed version is a static client-side demo. It uses fictional seed data and browser-local storage and does not provide live backend services or real authentication.
+📄 License
+
+No open-source license has been added to the repository yet. The project is currently shared for hackathon judging, demonstration, and review.
+
+Conclusion
+
+CampusIQ was developed to make academic support more actionable and transparent. Instead of simply showing that a student is falling behind, it gives mentors and students a shared place to understand the problem, agree on recovery targets, track progress, and compare results.
+
+The Rescue Loop, attendance simulator, explainable score calculation, and dynamic placement eligibility checks form the core of the current demo.
+
+Although the application still needs backend integration and production-grade security before it can be used with real institutional data, the prototype demonstrates how academic monitoring can be connected to a more structured and measurable student support process.
+
+One important thing before submitting: your original documentation has a few technical inconsistencies worth correcting so your explanation matches the actual code:
+
+- The success score is described as a six-factor model in the feature section, but the architecture section lists a different five-factor formula.
+- The attendance example uses both 51.5% across 13 sessions and 65.0% across 18 sessions. Keep the dates and weighted-attendance assumptions consistent wherever these values appear.
+- The introduction describes eight demo personas, but only six are listed in the table. Add the other two if they exist in the application.
+
+This version is written in a more natural, straightforward project-documentation style. Make sure you review it and adjust any descriptions that don't match what you personally implemented or tested.
