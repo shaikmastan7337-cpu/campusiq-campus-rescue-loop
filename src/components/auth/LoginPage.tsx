@@ -95,7 +95,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, isDark, onToggleD
     setErrorMessage('');
 
     if (!email) {
-      setErrorMessage('Please enter an institutional email address.');
+      setErrorMessage('Please enter your registered institutional email or account ID.');
       return;
     }
 
@@ -103,7 +103,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, isDark, onToggleD
 
     setTimeout(() => {
       const matchedUser = state.users.find(
-        (u) => u.email.toLowerCase().trim() === email.toLowerCase().trim()
+        (u) => u.email.toLowerCase().trim() === email.toLowerCase().trim() || u.loginId?.toLowerCase().trim() === email.toLowerCase().trim()
       );
 
       if (matchedUser) {
@@ -117,7 +117,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, isDark, onToggleD
         onLogin(matchedUser);
       } else {
         setErrorMessage(
-          `No account matches "${email}". Select any demo persona on the right, or enter e.g. "shweta.rao@campusiq.edu" or "aarav.sharma@campusiq.edu".`
+            `No account matches "${email}". Enter a registered institutional email or account ID, or select a demo persona.`
         );
       }
       setLoading(false);
@@ -227,10 +227,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, isDark, onToggleD
           <div className="lg:col-span-5 glass-card rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800/80 shadow-xl space-y-6">
             <div className="space-y-1">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                Enter Email
+                Enter Email or Account ID
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Demo sign-in matches seeded user emails (no real authentication server)
+                Demo sign-in matches registered emails or institutional IDs (no real authentication server)
               </p>
             </div>
 
@@ -244,14 +244,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, isDark, onToggleD
             <form onSubmit={handleCredentialsSubmit} className="space-y-4 text-xs">
               <div>
                 <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1.5">
-                  Institutional Email
+                  Institutional Email or ID
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
                   <input
-                    type="email"
+                    type="text"
                     required
-                    placeholder="shweta.rao@campusiq.edu"
+                    placeholder="name@campusiq.edu or STU-205"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none"

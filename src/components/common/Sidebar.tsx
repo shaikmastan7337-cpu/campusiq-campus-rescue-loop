@@ -85,6 +85,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, currentTab, onSelectTab 
         return [
           { id: 'overview', label: 'System Overview', icon: ShieldCheck },
           { id: 'roles', label: 'Roles & RBAC Policy', icon: Users },
+          { id: 'accounts', label: 'Faculty & HOD Accounts', icon: GraduationCap },
           { id: 'audit', label: 'Audit & Security Logs', icon: History },
           { id: 'settings', label: 'Platform Settings', icon: Layers },
         ];

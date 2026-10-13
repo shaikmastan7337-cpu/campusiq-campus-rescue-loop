@@ -168,6 +168,53 @@ class StorageManager {
     this.notify();
   }
 
+  public createStudentAccount(input: { studentId: string; displayName: string; email: string; departmentId: string; section: string; semester: number; academicYear: string }): { ok: boolean; message: string } {
+    if (this.state.currentUser.role !== 'admin') return { ok: false, message: 'Only a Campus Administrator can add student accounts.' };
+    const studentId = input.studentId.trim();
+    const email = input.email.trim().toLowerCase();
+    const department = this.state.departments.find((item) => item.departmentId === input.departmentId);
+    if (!studentId || !input.displayName.trim() || !email || !department || !input.section.trim()) return { ok: false, message: 'Complete all required student details.' };
+    if (this.state.students.some((student) => student.studentId.toLowerCase() === studentId.toLowerCase()) || this.state.users.some((user) => user.uid === `user-${studentId.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` || user.email.toLowerCase() === email || user.email.toLowerCase() === studentId.toLowerCase() || user.loginId?.toLowerCase() === studentId.toLowerCase())) return { ok: false, message: 'That student ID or email is already registered.' };
+
+    const uid = `user-${studentId.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+    const user: User = { uid, role: 'student', status: 'active', displayName: input.displayName.trim(), email, loginId: studentId, departmentId: department.departmentId, departmentName: department.name };
+    this.state.users.push(user);
+    this.state.students.push({ studentId, uid, rollNumber: studentId, departmentId: department.departmentId, departmentName: department.name, section: input.section.trim().toUpperCase(), semester: input.semester, academicYear: input.academicYear.trim(), cgpa: 0, backlogs: 0, mentorUid: '' });
+    department.studentCount += 1;
+    this.addAuditLog('STUDENT_ACCOUNT_CREATED', 'Student', studentId, `Created student login for ${user.displayName} in ${department.code}-${input.section.trim().toUpperCase()}`);
+    this.notify();
+    return { ok: true, message: `Student account created. Login ID: ${studentId}` };
+  }
+
+  public createStaffAccount(input: { staffId: string; displayName: string; email: string; departmentId: string; role: 'faculty' | 'hod'; designation: string }): { ok: boolean; message: string } {
+    if (this.state.currentUser.role !== 'super-admin') return { ok: false, message: 'Only the Super Administrator can create faculty or appoint HODs.' };
+    const staffId = input.staffId.trim();
+    const email = input.email.trim().toLowerCase();
+    const department = this.state.departments.find((item) => item.departmentId === input.departmentId);
+    if (!staffId || !input.displayName.trim() || !email || !department || !input.designation.trim()) return { ok: false, message: 'Complete all required staff details.' };
+    if (this.state.users.some((user) => user.uid === `user-${staffId.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` || user.email.toLowerCase() === email || user.email.toLowerCase() === staffId.toLowerCase() || user.loginId?.toLowerCase() === staffId.toLowerCase()) || this.state.faculty.some((profile) => profile.facultyId.toLowerCase() === staffId.toLowerCase())) return { ok: false, message: 'That staff ID or email is already registered.' };
+
+    const uid = `user-${staffId.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+    const user: User = { uid, role: input.role, status: 'active', displayName: input.displayName.trim(), email, loginId: staffId, departmentId: department.departmentId, departmentName: department.name };
+    this.state.users.push(user);
+    this.state.faculty.push({ facultyId: staffId, uid, departmentId: department.departmentId, departmentName: department.name, designation: input.designation.trim(), assignedClasses: [] });
+    department.facultyCount += 1;
+    if (input.role === 'hod') {
+      const previousHod = this.state.users.find((item) => item.uid === department.hodUid);
+      if (previousHod && previousHod.uid !== uid) {
+        previousHod.role = 'faculty';
+        if (!this.state.faculty.some((profile) => profile.uid === previousHod.uid)) {
+          this.state.faculty.push({ facultyId: previousHod.loginId || `FAC-${previousHod.uid}`, uid: previousHod.uid, departmentId: department.departmentId, departmentName: department.name, designation: 'Faculty Member', assignedClasses: [] });
+        }
+      }
+      department.hodUid = uid;
+      department.hodName = user.displayName;
+    }
+    this.addAuditLog(input.role === 'hod' ? 'HOD_APPOINTED' : 'FACULTY_ACCOUNT_CREATED', input.role === 'hod' ? 'Department' : 'Faculty', input.role === 'hod' ? department.departmentId : staffId, `${input.role === 'hod' ? 'Appointed' : 'Created account for'} ${user.displayName} (${staffId}) in ${department.code}`);
+    this.notify();
+    return { ok: true, message: `${input.role === 'hod' ? 'HOD appointed' : 'Faculty account created'}. Login ID: ${staffId}` };
+  }
+
   public assignFacultyToClass(classId: string, facultyUid: string): boolean {
     const classSection = this.state.classes.find((item) => item.classId === classId);
     const facultyProfile = this.state.faculty.find((item) => item.uid === facultyUid);

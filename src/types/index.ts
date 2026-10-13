@@ -14,6 +14,8 @@ export interface User {
   status: 'active' | 'inactive';
   displayName: string;
   email: string;
+  /** Institutional ID accepted by the demo login form (not a password). */
+  loginId?: string;
   departmentId?: string;
   departmentName?: string;
   avatarUrl?: string;

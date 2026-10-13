@@ -30,6 +30,14 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
   const [enforce2Fa, setEnforce2Fa] = useState(true);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [staffForm, setStaffForm] = useState({ staffId: '', displayName: '', email: '', departmentId: state.departments[0]?.departmentId || '', role: 'faculty' as 'faculty' | 'hod', designation: 'Assistant Professor' });
+
+  const handleCreateStaff = (event: React.FormEvent) => {
+    event.preventDefault();
+    const result = storage.createStaffAccount(staffForm);
+    setSuccessMsg(result.message);
+    if (result.ok) setStaffForm({ ...staffForm, staffId: '', displayName: '', email: '' });
+  };
 
   const handleSaveSecurity = (e: React.FormEvent) => {
     e.preventDefault();
@@ -193,6 +201,34 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {currentTab === 'accounts' && (
+        <div className="space-y-5">
+          <form onSubmit={handleCreateStaff} className="glass-card rounded-2xl border border-rose-200 p-5 dark:border-rose-900/60 space-y-4">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Faculty provisioning & HOD appointment</h3>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Create a staff account by institutional ID. Choosing HOD assigns the person to that department and updates its HOD record. Demo sign-in accepts the ID or email without a password.</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <input required placeholder="Staff ID (e.g. FAC-205)" value={staffForm.staffId} onChange={(e) => setStaffForm({ ...staffForm, staffId: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900" />
+              <input required placeholder="Full name" value={staffForm.displayName} onChange={(e) => setStaffForm({ ...staffForm, displayName: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900" />
+              <input required type="email" placeholder="Institutional email" value={staffForm.email} onChange={(e) => setStaffForm({ ...staffForm, email: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900" />
+              <select value={staffForm.departmentId} onChange={(e) => setStaffForm({ ...staffForm, departmentId: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900">{state.departments.map((department) => <option key={department.departmentId} value={department.departmentId}>{department.code} — {department.name}</option>)}</select>
+              <select value={staffForm.role} onChange={(e) => setStaffForm({ ...staffForm, role: e.target.value as 'faculty' | 'hod', designation: e.target.value === 'hod' ? 'Head of Department' : 'Assistant Professor' })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900"><option value="faculty">Faculty Member</option><option value="hod">Appoint as HOD</option></select>
+              <input required placeholder="Designation" value={staffForm.designation} onChange={(e) => setStaffForm({ ...staffForm, designation: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900" />
+            </div>
+            <button type="submit" className="rounded-xl bg-rose-700 px-4 py-2 text-xs font-bold text-white hover:bg-rose-800">{staffForm.role === 'hod' ? 'Create account & appoint HOD' : 'Create faculty account'}</button>
+          </form>
+
+          <div className="glass-card rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
+            <h3 className="mb-3 text-sm font-bold text-slate-900 dark:text-white">Department leadership assignments</h3>
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">{state.departments.map((department) => {
+              const hod = state.users.find((user) => user.uid === department.hodUid);
+              return <div key={department.departmentId} className="flex flex-wrap items-center justify-between gap-2 py-3 text-xs"><span className="font-semibold text-slate-700 dark:text-slate-200">{department.code} · {department.name}</span><span className="text-slate-500 dark:text-slate-400">HOD: {hod?.displayName || department.hodName} {hod?.loginId ? `(${hod.loginId})` : ''}</span></div>;
+            })}</div>
           </div>
         </div>
       )}

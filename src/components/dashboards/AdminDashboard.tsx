@@ -40,6 +40,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, cur
   const [assignmentFacultyUid, setAssignmentFacultyUid] = useState('');
   const [assignmentClassId, setAssignmentClassId] = useState('');
   const [assignmentMessage, setAssignmentMessage] = useState('');
+  const [studentMessage, setStudentMessage] = useState('');
+  const [newStudent, setNewStudent] = useState({ studentId: '', displayName: '', email: '', departmentId: state.departments[0]?.departmentId || '', section: 'A', semester: 1, academicYear: '2026-27' });
+
+  const handleCreateStudent = (event: React.FormEvent) => {
+    event.preventDefault();
+    const result = storage.createStudentAccount(newStudent);
+    setStudentMessage(result.message);
+    if (result.ok) setNewStudent({ ...newStudent, studentId: '', displayName: '', email: '' });
+  };
 
   const selectedAssignmentFaculty = state.faculty.find((profile) => profile.uid === assignmentFacultyUid) || state.faculty[0];
   const assignableClasses = state.classes.filter((classSection) =>
@@ -375,6 +384,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, cur
       {/* Students Tab */}
       {currentTab === 'students' && (
         <div className="space-y-6">
+          <form onSubmit={handleCreateStudent} className="glass-card rounded-2xl border border-cyan-200 p-5 dark:border-cyan-900/60 space-y-4">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Create student account</h3>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Register a student ID, profile, and cohort. In this demo, the student can use the ID or email at sign-in; no password is verified.</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <input required placeholder="Student ID (e.g. STU-205)" value={newStudent.studentId} onChange={(e) => setNewStudent({ ...newStudent, studentId: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900" />
+              <input required placeholder="Student full name" value={newStudent.displayName} onChange={(e) => setNewStudent({ ...newStudent, displayName: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900" />
+              <input required type="email" placeholder="Institutional email" value={newStudent.email} onChange={(e) => setNewStudent({ ...newStudent, email: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900" />
+              <select value={newStudent.departmentId} onChange={(e) => setNewStudent({ ...newStudent, departmentId: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900">{state.departments.map((department) => <option key={department.departmentId} value={department.departmentId}>{department.code} — {department.name}</option>)}</select>
+              <input required placeholder="Section (e.g. B)" value={newStudent.section} onChange={(e) => setNewStudent({ ...newStudent, section: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900" />
+              <select value={newStudent.semester} onChange={(e) => setNewStudent({ ...newStudent, semester: Number(e.target.value) })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900">{[1,2,3,4,5,6,7,8].map((semester) => <option key={semester} value={semester}>Semester {semester}</option>)}</select>
+              <input required placeholder="Academic year" value={newStudent.academicYear} onChange={(e) => setNewStudent({ ...newStudent, academicYear: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs dark:border-slate-700 dark:bg-slate-900" />
+              <button type="submit" className="rounded-xl bg-cyan-700 px-4 py-2 text-xs font-bold text-white hover:bg-cyan-800">Create student login</button>
+            </div>
+            {studentMessage && <p role="status" className="text-xs font-semibold text-cyan-800 dark:text-cyan-300">{studentMessage}</p>}
+          </form>
           <div className="glass-card rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800/80 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
